@@ -16,33 +16,11 @@ jobs:
         sudo apt update
         sudo apt-get install ninja-build doxygen graphviz libcurl4-openssl-dev libprotobuf-dev libprotoc-dev protobuf-compiler libhdf5-dev qtbase5-dev libqwt-qt5-dev
 
-
-    - name: Install Cap'n Proto
-      run: |
-        mkdir "${{ runner.workspace }}/capnp"
-        cd "${{ runner.workspace }}/capnp"
-        curl -O https://capnproto.org/capnproto-c++-0.9.0.tar.gz
-        tar zxf capnproto-c++-0.9.0.tar.gz
-        cd capnproto-c++-0.9.0
-        ./configure
-        make -j
-        sudo make install
-
     - name: Checkout
       uses: actions/checkout@v3
       with:
         submodules:  'true'
         fetch-depth: 0
-
-    - name: Install Python requirements
-      shell: bash
-      run: |
-        sudo add-apt-repository ppa:deadsnakes/ppa -y
-        sudo apt-get -y install python3.9-dev python3.9-venv
-        mkdir ".venv_build"
-        python3.9 -m venv ".venv_build"
-        source ".venv_build/bin/activate"
-        pip install -r "$GITHUB_WORKSPACE/requirements.txt"
 
     - name: CMake
       run: |
@@ -54,28 +32,28 @@ jobs:
         cd "${{ runner.workspace }}/_build"
         cmake $GITHUB_WORKSPACE -G "Ninja" \
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-        -DHAS_HDF5=ON \
-        -DHAS_QT5=ON \
-        -DHAS_CURL=ON \
-        -DHAS_CAPNPROTO=ON \
-        -DBUILD_DOCS=ON \
-        -DBUILD_APPS=ON \
-        -DBUILD_SAMPLES=ON \
-        -DBUILD_TIME=ON \
-        -DBUILD_PY_BINDING=ON \
-        -DBUILD_STANDALONE_PY_WHEEL=ON \
+        -DHAS_HDF5=OFF \
+        -DHAS_QT5=OFF \
+        -DHAS_CURL=OFF \
+        -DHAS_CAPNPROTO=OFF \
+        -DBUILD_DOCS=OFF \
+        -DBUILD_APPS=OFF \
+        -DBUILD_SAMPLES=OFF \
+        -DBUILD_TIME=OFF \
+        -DBUILD_PY_BINDING=OFF \
         -DBUILD_CSHARP_BINDING=OFF \
         -DBUILD_ECAL_TESTS=ON \
         -DECAL_LAYER_ICEORYX=OFF \
         -DECAL_INCLUDE_PY_SAMPLES=OFF \
-        -DECAL_INSTALL_SAMPLE_SOURCES=ON \
+        -DECAL_INSTALL_SAMPLE_SOURCES=OFF \
         -DECAL_JOIN_MULTICAST_TWICE=OFF \
         -DECAL_NPCAP_SUPPORT=OFF \
         -DECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS=ON \
-        -DECAL_THIRDPARTY_BUILD_PROTOBUF=OFF \
-        -DECAL_THIRDPARTY_BUILD_SPDLOG=ON \
-        -DECAL_THIRDPARTY_BUILD_TINYXML2=ON \
-        -DECAL_THIRDPARTY_BUILD_FINEFTP=ON \
+        -DECAL_THIRDPARTY_BUILD_PROTOBUF=ON \
+        -DECAL_THIRDPARTY_BUILD_SPDLOG=OFF \
+        -DECAL_THIRDPARTY_BUILD_TINYXML2=OFF \
+        -DECAL_THIRDPARTY_BUILD_FINEFTP=OFF \
+        -DECAL_THIRDPARTY_BUILD_TERMCOLOR=OFF \
         -DECAL_THIRDPARTY_BUILD_CURL=OFF \
         -DECAL_THIRDPARTY_BUILD_GTEST=ON \
         -DECAL_THIRDPARTY_BUILD_HDF5=OFF \

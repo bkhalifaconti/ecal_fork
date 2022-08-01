@@ -75,64 +75,15 @@ endif()
 # command line build options
 # use it that way cmake .. -DBUILD_APPS=ON -DBUILD_SAMPLES=ON
 # --------------------------------------------------------
-option(HAS_HDF5                                "Platform supports HDF5 library"                                    ON)
-option(HAS_QT5                                 "Platform supports Qt 5 library"                                    ON)
-option(HAS_CURL                                "Build with CURL (i.e. upload support in the recorder app)"         ON)
-option(HAS_CAPNPROTO                           "Platform supports Cap'n Proto library"                            OFF)
-
-option(BUILD_DOCS                              "Build the eCAL documentation"                                     OFF)
-option(BUILD_APPS                              "Build the eCAL applications"                                       ON)
-option(BUILD_SAMPLES                           "Build the eCAL samples"                                            ON)
-option(BUILD_TIME                              "Build the eCAL time interfaces"                                    ON)
-option(BUILD_PY_BINDING                        "Build eCAL python binding"                                        OFF)
-option(BUILD_STANDALONE_PY_WHEEL               "Build eCAL python binding as standalone wheel"                    OFF)
-option(BUILD_CSHARP_BINDING                    "Build eCAL C# binding"                                            OFF)
-option(BUILD_ECAL_TESTS                        "Build the eCAL google tests"                                      OFF)
-
-option(ECAL_LAYER_ICEORYX                      "Use iceoryx shared memory as local communication layer"           OFF)
-
-option(ECAL_INCLUDE_PY_SAMPLES                 "Include python language sample projects into CMake"               OFF)
-option(ECAL_INSTALL_SAMPLE_SOURCES             "Install the sources of eCAL samples"                               ON)
-
-option(ECAL_JOIN_MULTICAST_TWICE               "Specific Multicast Network Bug Workaround"                        OFF)
-option(ECAL_NPCAP_SUPPORT                      "Enable the eCAL Npcap Receiver (i.e. the Win10 performance fix)"  OFF)
-
 # Set option regarding third party library builds
 option(ECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS   "Build CMakeFunctions with eCAL"                                    ON)
-option(ECAL_THIRDPARTY_BUILD_SPDLOG            "Build spdlog with eCAL"                                            ON)
-option(ECAL_THIRDPARTY_BUILD_TINYXML2          "Build tinyxml2 with eCAL"                                          ON)
-option(ECAL_THIRDPARTY_BUILD_FINEFTP           "Build fineFTP with eCAL"                                           ON)
-option(ECAL_THIRDPARTY_BUILD_TERMCOLOR         "Build termcolor with eCAL"                                         ON)
 option(ECAL_THIRDPARTY_BUILD_TCP_PUBSUB        "Build tcp_pubsub library with eCAL"                                ON)
 option(ECAL_THIRDPARTY_BUILD_RECYCLE           "Build steinwurf::recylce with eCAL"                                ON)
-# option(ECAL_THIRDPARTY_BUILD_ZLIB              "Build zlib with eCAL"                                              ON)
-# option(ECAL_THIRDPARTY_BUILD_LIBSSH2           "Build libssh2 with eCAL"                                           ON)
-option(ECAL_THIRDPARTY_BUILD_GTEST             "Build gtest with eCAL"                                            OFF)
-
+option(ECAL_THIRDPARTY_BUILD_GTEST             "Build gtest with eCAL"                                             ON)
 if(WIN32)
   option(ECAL_THIRDPARTY_BUILD_PROTOBUF        "Build protobuf with eCAL"                                          ON)
-  option(ECAL_THIRDPARTY_BUILD_CURL            "Build CURL with eCAL"                                              ON)
-  option(ECAL_THIRDPARTY_BUILD_HDF5            "Build HDF5 with eCAL"                                              ON)
-  cmake_dependent_option(ECAL_THIRDPARTY_BUILD_QWT "Build qwt::qwt with eCAL"                                      ON  "HAS_QT5" OFF)
 else()
   option(ECAL_THIRDPARTY_BUILD_PROTOBUF        "Build protobuf with eCAL"                                          OFF)
-  option(ECAL_THIRDPARTY_BUILD_CURL            "Build CURL with eCAL"                                              OFF)
-  option(ECAL_THIRDPARTY_BUILD_HDF5            "Build HDF5 with eCAL"                                              OFF)
-  cmake_dependent_option(ECAL_THIRDPARTY_BUILD_QWT "Build qwt::qwt with eCAL"                                      OFF "HAS_QT5" OFF)
-endif()
-
-# This should be ON, unless build ecal hdf5 for Matlab usage
-option(ECAL_LINK_HDF5_SHARED                   "Link shared libs of HDF5"                                          ON)
-
-option(CPACK_PACK_WITH_INNOSETUP               "Create Innosetup installer for the Windows build"                  ON)
-
-set(ECAL_INSTALL_PYTHON_DIR "bin" CACHE PATH "Location to install the Python extension modules. Might be set by setupdtools install.")
-
-set(ECAL_BUILD_VERSION "0.0.0" CACHE STRING "Inject a build version if not building from a git repository")
-
-# there is a CMake issue with testing threading availibility via TEST_RUN
-if(${CMAKE_CROSSCOMPILING})
-  set(THREADS_PTHREAD_ARG "2" CACHE STRING "Forcibly set by CMakeLists.txt." FORCE)
 endif()
 
 
@@ -180,19 +131,10 @@ endif()
 # according to how options ECAL_BUILD_<SUBPROJECT> are set
 set(possible_subprojects
   Protobuf
-  spdlog
-  tinyxml2
-  fineftp
-  termcolor
   recycle
   tcp_pubsub
-  #libssh2
-  #zlib zlibstatic
-  CURL
   GTest
-  HDF5
   CMakeFunctions
-  qwt
 )
 
 # We should rename the option, but don't know how to do in in a
@@ -245,8 +187,6 @@ include(helper_functions/ecal_python_functions)
 if(MSVC)
   set(eCAL_PLATFORM_TOOLSET ${CMAKE_VS_PLATFORM_TOOLSET})
 endif()
-
-
 
 # --------------------------------------------------------
 # offer the user the choice of overriding the installation directories
@@ -315,250 +255,26 @@ add_subdirectory(ecal/core)
 # --------------------------------------------------------
 # custom libs
 # --------------------------------------------------------
-add_subdirectory(lib/ThreadingUtils)
+#add_subdirectory(lib/ThreadingUtils)
 add_subdirectory(lib/CustomTclap)
 add_subdirectory(lib/ecal_utils)
 
-if(HAS_QT5)
-  add_subdirectory(lib/CustomQt)
-endif()
-if(ECAL_NPCAP_SUPPORT)
-  add_subdirectory(lib/Udpcap)
-endif()
-add_subdirectory(lib/EcalParser)
-if(HAS_QT5)
-  add_subdirectory(lib/QEcalParser)
-endif(HAS_QT5)
-
-# --------------------------------------------------------
-# ecal mon plugin sdk
-# --------------------------------------------------------
-if(HAS_QT5)
-  add_subdirectory(app/mon/mon_plugin_lib)
-endif(HAS_QT5)
-
-# --------------------------------------------------------
-# ecal rec addon sdk
-# --------------------------------------------------------
-add_subdirectory(app/rec/rec_addon_core)
-add_subdirectory(app/rec/rec_addon_dummy)
-
-# --------------------------------------------------------
-# ecal time
-# --------------------------------------------------------
-if(BUILD_TIME)
-  if(WIN32)
-    set(ECAL_TIME_PLUGIN_DIR ecaltime_plugins)
-  endif()
-  add_subdirectory(contrib/ecaltime)
-endif()
-
-# --------------------------------------------------------
-# ecal hdf5 support
-# --------------------------------------------------------
-if(HAS_HDF5)
-  add_subdirectory(contrib/ecalhdf5)
-  add_subdirectory(contrib/message)
-endif()
-
-# --------------------------------------------------------
-# ecal core python binding
-# --------------------------------------------------------
-if(BUILD_PY_BINDING)
-  add_subdirectory(lang/python)
-endif()
-
-# --------------------------------------------------------
-# ecal core csharp binding
-# --------------------------------------------------------
-if(BUILD_CSHARP_BINDING AND WIN32)
-  add_subdirectory(lang/csharp/Continental/eCAL/Core/)
-  add_subdirectory(lang/csharp/Continental/eCAL/Protobuf/)
-endif()
-
-# --------------------------------------------------------
-# console applications
-# --------------------------------------------------------
-add_subdirectory(app/apps)
-if(BUILD_APPS)
-  add_subdirectory(app/mon/mon_cli)
-  add_subdirectory(app/util/config)
-  add_subdirectory(app/util/stop)
-  add_subdirectory(app/sys/sys_core)
-  add_subdirectory(app/sys/sys_cli)
-  add_subdirectory(app/sys/sys_client_cli)
-  add_subdirectory(app/sys/sys_client_core)
-  if(NOT APPLE)
-    add_subdirectory(contrib/mma)
-  endif()
-endif()
-
-# --------------------------------------------------------
-# applications using hdf5
-# --------------------------------------------------------
-if(BUILD_APPS AND HAS_HDF5)
-  add_subdirectory(app/play/play_core)
-  add_subdirectory(app/play/play_cli)
-
-  add_subdirectory(app/rec/rec_client_core)
-  add_subdirectory(app/rec/rec_server_core)
-  add_subdirectory(app/rec/rec_client_cli)
-  add_subdirectory(app/rec/rec_server_cli)
-endif()
-
-# --------------------------------------------------------
-# qt applications
-# --------------------------------------------------------
-if(BUILD_APPS AND HAS_QT5)
-  add_subdirectory(app/sys/sys_gui)
-  add_subdirectory(app/mon/mon_gui)
-  if(WIN32)
-    set(ECAL_MON_PLUGIN_DIR ecalmon_plugins)
-  else()
-    set(ECAL_MON_PLUGIN_DIR ecal/plugins/mon)
-  endif()
-  add_subdirectory(app/mon/mon_plugins)
-  add_subdirectory(app/util/launcher)
-# --------------------------------------------------------
-# qt applications using hdf5
-# --------------------------------------------------------
-if(BUILD_APPS AND HAS_QT5 AND HAS_HDF5)
-  add_subdirectory(app/play/play_gui)
-  add_subdirectory(app/rec/rec_gui)
-endif()
-endif()
-
-# --------------------------------------------------------
-# samples
-# --------------------------------------------------------
-if(BUILD_SAMPLES)
-  add_subdirectory(samples)
-endif()
-
-# --------------------------------------------------------
 # unit tests
 # --------------------------------------------------------
-if(BUILD_ECAL_TESTS)
-  enable_testing()
+enable_testing()
 
-  # ------------------------------------------------------
-  # test contrib
-  # ------------------------------------------------------
-  if(HAS_HDF5)
-    add_subdirectory(testing/contrib/ecalhdf5/hdf5_test)
-  endif()
-  add_subdirectory(testing/contrib/ecalproto/dynproto_test)
-  add_subdirectory(testing/contrib/ecalproto/ecal_proto_test)
+# ------------------------------------------------------
+# test contrib
+# ------------------------------------------------------
+add_subdirectory(testing/contrib/ecalproto/dynproto_test)
+add_subdirectory(testing/contrib/ecalproto/ecal_proto_test)
 
-  # ------------------------------------------------------
-  # test ecal
-  # ------------------------------------------------------
-  #add_subdirectory(testing/ecal/clientserver_test)   THIS TEST IS NOT ABLE TO RUN ON GH ACTIONS
-  add_subdirectory(testing/ecal/core_test)
-  add_subdirectory(testing/ecal/event_test)
-  add_subdirectory(testing/ecal/expmap_test)
-if(NOT ECAL_LAYER_ICEORYX)
-  add_subdirectory(testing/ecal/io_memfile_test)
-endif(NOT ECAL_LAYER_ICEORYX)
-  add_subdirectory(testing/ecal/pubsub_inproc_test)
-  add_subdirectory(testing/ecal/pubsub_proto_test)
-  add_subdirectory(testing/ecal/pubsub_test)
-endif()
-
-# --------------------------------------------------------
-# configs
-# --------------------------------------------------------
-add_subdirectory(ecal/core/cfg)
-
-if(BUILD_DOCS)
-  add_subdirectory(doc)
-endif()
-
-# --------------------------------------------------------
-# debscripts
-# --------------------------------------------------------
-if (UNIX)
-  add_subdirectory(cpack/debscripts)
-endif()
-
-#install(EXPORT eCALTargets DESTINATION cmake NAMESPACE eCAL::)
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-  ${eCAL_config_version}
-  VERSION ${eCAL_VERSION}
-  COMPATIBILITY SameMajorVersion
-)
-
-configure_package_config_file(
-    cmake/${PROJECT_NAME}Config.cmake.in
-    ${eCAL_config}
-    INSTALL_DESTINATION ${${PROJECT_NAME}_install_cmake_dir}
-    PATH_VARS ${PROJECT_NAME}_install_include_dir ${PROJECT_NAME}_install_cmake_dir
-)
-
-install(FILES ${eCAL_config} ${eCAL_config_version}
-  DESTINATION ${eCAL_install_cmake_dir}
-  COMPONENT sdk
-)
-
-install(FILES
-  cmake/helper_functions/ecal_add_functions.cmake
-  cmake/helper_functions/ecal_helper_functions.cmake
-  cmake/helper_functions/ecal_install_functions.cmake
-  DESTINATION ${${PROJECT_NAME}_install_cmake_dir}/helper_functions
-  COMPONENT sdk
-)
-
-install(EXPORT eCALCoreTargets
-  FILE ${PROJECT_NAME}Targets.cmake
-  DESTINATION ${eCAL_install_cmake_dir}
-  NAMESPACE eCAL::
-  COMPONENT sdk
-)
-
-if(ECAL_INSTALL_SAMPLE_SOURCES)
-  install(DIRECTORY samples/
-    DESTINATION ${eCAL_install_samples_src_dir}
-  )
-endif()
-
-# --------------------------------------------------------
-# create package
-# --------------------------------------------------------
-include(cpack/cpack_variables.cmake)
-
-message(STATUS "Build Options:")
-message(STATUS "--------------------------------------------------------------------------------")
-message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS                  : ${CMAKE_EXPORT_COMPILE_COMMANDS}")
-message(STATUS "HAS_HDF5                                       : ${HAS_HDF5}")
-message(STATUS "HAS_QT5                                        : ${HAS_QT5}")
-message(STATUS "HAS_CURL                                       : ${HAS_CURL}")
-message(STATUS "HAS_CAPNPROTO                                  : ${HAS_CAPNPROTO}")
-message(STATUS "BUILD_DOCS                                     : ${BUILD_DOCS}")
-message(STATUS "BUILD_APPS                                     : ${BUILD_APPS}")
-message(STATUS "BUILD_SAMPLES                                  : ${BUILD_SAMPLES}")
-message(STATUS "BUILD_TIME                                     : ${BUILD_TIME}")
-message(STATUS "BUILD_PY_BINDING                               : ${BUILD_PY_BINDING}")
-message(STATUS "BUILD_STANDALONE_PY_WHEEL                      : ${BUILD_STANDALONE_PY_WHEEL}")
-message(STATUS "BUILD_CSHARP_BINDING                           : ${BUILD_CSHARP_BINDING}")
-message(STATUS "BUILD_ECAL_TESTS                               : ${BUILD_ECAL_TESTS}")
-message(STATUS "ECAL_LAYER_ICEORYX                             : ${ECAL_LAYER_ICEORYX}")
-message(STATUS "ECAL_INCLUDE_PY_SAMPLES                        : ${ECAL_INCLUDE_PY_SAMPLES}")
-message(STATUS "ECAL_INSTALL_SAMPLE_SOURCES                    : ${ECAL_INSTALL_SAMPLE_SOURCES}")
-message(STATUS "ECAL_JOIN_MULTICAST_TWICE                      : ${ECAL_JOIN_MULTICAST_TWICE}")
-message(STATUS "ECAL_NPCAP_SUPPORT                             : ${ECAL_NPCAP_SUPPORT}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS          : ${ECAL_THIRDPARTY_BUILD_CMAKE_FUNCTIONS}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_SPDLOG                   : ${ECAL_THIRDPARTY_BUILD_SPDLOG}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_TINYXML2                 : ${ECAL_THIRDPARTY_BUILD_TINYXML2}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_FINEFTP                  : ${ECAL_THIRDPARTY_BUILD_FINEFTP}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_TERMCOLOR                : ${ECAL_THIRDPARTY_BUILD_TERMCOLOR}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_TCP_PUBSUB               : ${ECAL_THIRDPARTY_BUILD_TCP_PUBSUB}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_RECYCLE                  : ${ECAL_THIRDPARTY_BUILD_RECYCLE}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_GTEST                    : ${ECAL_THIRDPARTY_BUILD_GTEST}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_PROTOBUF                 : ${ECAL_THIRDPARTY_BUILD_PROTOBUF}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_CURL                     : ${ECAL_THIRDPARTY_BUILD_CURL}")
-message(STATUS "ECAL_THIRDPARTY_BUILD_HDF5                     : ${ECAL_THIRDPARTY_BUILD_HDF5}")
-message(STATUS "ECAL_LINK_HDF5_SHARED                          : ${ECAL_LINK_HDF5_SHARED}")
-message(STATUS "CPACK_PACK_WITH_INNOSETUP                      : ${CPACK_PACK_WITH_INNOSETUP}")
-
-message(STATUS "--------------------------------------------------------------------------------")
+# ------------------------------------------------------
+# test ecal
+# ------------------------------------------------------
+add_subdirectory(testing/ecal/core_test)
+add_subdirectory(testing/ecal/event_test)
+add_subdirectory(testing/ecal/expmap_test)
+add_subdirectory(testing/ecal/pubsub_inproc_test)
+add_subdirectory(testing/ecal/pubsub_proto_test)
+add_subdirectory(testing/ecal/pubsub_test)
