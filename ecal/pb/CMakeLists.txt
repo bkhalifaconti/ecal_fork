@@ -24,21 +24,9 @@ set(ProtoFiles
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/ecal.proto
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/host.proto
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/layer.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/mma/mma.proto
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/monitoring.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/play/service.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/play/state.proto
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/process.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/rec/client_service.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/rec/client_state.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/rec/server_config.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/rec/server_service.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/rec/server_state.proto
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/service.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/sim_time.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/sys/service.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/sys/client_service.proto
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/sys/state.proto
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ecal/pb/topic.proto
 )
 
